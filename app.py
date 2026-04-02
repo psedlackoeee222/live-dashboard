@@ -76,6 +76,9 @@ def read_logo_vw200():
 
         raw_value = rr.registers[0]
         value = raw_value / 10.0
+
+        print(f"KAHL1 raw={raw_value} scaled={value}")
+        
         return value, True, None
     except Exception as e:
         return None, False, str(e)
