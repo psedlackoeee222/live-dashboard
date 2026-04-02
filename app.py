@@ -59,7 +59,8 @@ def read_s7_qw288():
         value = get_int(data, 0)
         return value, True, None
     except Exception as e:
-        return None, False, str(e)
+        return None, False, str(e) #pokus
+    
 
 
 def read_logo_vw200():
@@ -78,7 +79,7 @@ def read_logo_vw200():
         value = raw_value / 10.0
 
         print(f"KAHL1 raw={raw_value} scaled={value}")
-        
+
         return value, True, None
     except Exception as e:
         return None, False, str(e)
