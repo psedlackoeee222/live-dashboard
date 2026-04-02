@@ -74,7 +74,8 @@ def read_logo_vw200():
         if rr.isError():
             return None, False, f"Modbus error: {rr}"
 
-        value = rr.registers[0]
+        raw_value = rr.registers[0]
+        value = raw_value / 10.0
         return value, True, None
     except Exception as e:
         return None, False, str(e)
