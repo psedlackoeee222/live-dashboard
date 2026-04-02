@@ -41,15 +41,15 @@
 <h2>Live Dashboard</h2>
 
 <div class="card">
-    <div class="small">KAHL2 (PLC / S7)</div>
-    <div class="value" id="plc">--</div>
-    <div id="plc_state">state: --</div>
-</div>
-
-<div class="card">
     <div class="small">KAHL1 (LOGO / Modbus)</div>
     <div class="value" id="logo">--</div>
     <div id="logo_state">state: --</div>
+</div>
+
+<div class="card">
+    <div class="small">KAHL2 (PLC / S7)</div>
+    <div class="value" id="plc">--</div>
+    <div id="plc_state">state: --</div>
 </div>
 
 <div class="small">Last update: <span id="time">--</span></div>
@@ -63,8 +63,8 @@ let chart = new Chart(document.getElementById("chart"), {
     data: {
         labels: [],
         datasets: [
-            { label: "KAHL2", data: [] },
-            { label: "KAHL1", data: [] }
+            { label: "KAHL1", data: [] },
+            { label: "KAHL2", data: [] }
         ]
     },
     options: {
@@ -93,8 +93,9 @@ async function update() {
         logoState.className = data.logo_ok ? "ok" : "err";
 
         chart.data.labels = data.hist_plc.map((_, i) => i + 1);
-        chart.data.datasets[0].data = data.hist_plc;
-        chart.data.datasets[1].data = data.hist_logo;
+        chart.data.datasets[0].data = data.hist_logo; //KAHL1
+        chart.data.datasets[1].data = data.hist_plc;  //KAHL2
+        
         chart.update();
     } catch (e) {
         document.getElementById("plc_state").innerText = "Server unreachable";
