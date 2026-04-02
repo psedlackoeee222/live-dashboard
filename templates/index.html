@@ -4,45 +4,104 @@
     <title>Live Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            max-width: 760px;
+            margin: auto;
+            padding: 10px;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .ok {
+            color: green;
+            font-weight: bold;
+        }
+        .err {
+            color: red;
+            font-weight: bold;
+        }
+        .small {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
-
-<body style="font-family: Arial; text-align:center;">
+<body>
 
 <h2>Live Dashboard</h2>
 
-<div>
-    <h3>PLC: <span id="plc">--</span></h3>
-    <h3>LOGO: <span id="logo">--</span></h3>
-    <small id="time"></small>
+<div class="card">
+    <div class="small">KAHL2 (PLC / S7)</div>
+    <div class="value" id="plc">--</div>
+    <div id="plc_state">state: --</div>
 </div>
 
+<div class="card">
+    <div class="small">KAHL1 (LOGO / Modbus)</div>
+    <div class="value" id="logo">--</div>
+    <div id="logo_state">state: --</div>
+</div>
+
+<div class="small">Last update: <span id="time">--</span></div>
+
+<br>
 <canvas id="chart" height="150"></canvas>
 
 <script>
 let chart = new Chart(document.getElementById("chart"), {
-    type: 'line',
+    type: "line",
     data: {
         labels: [],
         datasets: [
-            { label: "PLC", data: [] },
-            { label: "LOGO", data: [] }
+            { label: "KAHL2", data: [] },
+            { label: "KAHL1", data: [] }
         ]
+    },
+    options: {
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: true
     }
 });
 
 async function update() {
-    let res = await fetch("/api/live");
-    let data = await res.json();
+    try {
+        const res = await fetch("/api/live");
+        const data = await res.json();
 
-    document.getElementById("plc").innerText = data.plc;
-    document.getElementById("logo").innerText = data.logo;
-    document.getElementById("time").innerText = data.time;
+        document.getElementById("plc").innerText = data.plc;
+        document.getElementById("logo").innerText = data.logo;
+        document.getElementById("time").innerText = data.time;
 
-    chart.data.labels = data.hist_plc.map((_, i) => i);
-    chart.data.datasets[0].data = data.hist_plc;
-    chart.data.datasets[1].data = data.hist_logo;
+        const plcState = document.getElementById("plc_state");
+        const logoState = document.getElementById("logo_state");
 
-    chart.update();
+        plcState.innerText = data.plc_ok ? "ONLINE" : "ERROR - " + data.plc_err;
+        plcState.className = data.plc_ok ? "ok" : "err";
+
+        logoState.innerText = data.logo_ok ? "ONLINE" : "ERROR - " + data.logo_err;
+        logoState.className = data.logo_ok ? "ok" : "err";
+
+        chart.data.labels = data.hist_plc.map((_, i) => i + 1);
+        chart.data.datasets[0].data = data.hist_plc;
+        chart.data.datasets[1].data = data.hist_logo;
+        chart.update();
+    } catch (e) {
+        document.getElementById("plc_state").innerText = "Server unreachable";
+        document.getElementById("plc_state").className = "err";
+        document.getElementById("logo_state").innerText = "";
+        document.getElementById("logo_state").className = "";
+    }
 }
 
 setInterval(update, 2000);
