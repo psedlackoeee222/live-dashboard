@@ -1,17 +1,26 @@
+# http://localhost:8080/
+# http://192.168.3.33:8080/
+# http://10.100.0.4:host:8080/
+
+
 from flask import Flask, jsonify, render_template
 from collections import deque
 import time
 import logging
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+from werkzeug.serving import WSGIRequestHandler
+
+WSGIRequestHandler.log_request = lambda *args, **kwargs: None
+
+log = logging.getLogger("werkzeug")
+log.disabled = True
 
 import snap7
 from snap7.util import get_int
 from snap7.type import Areas
-
 from pymodbus.client import ModbusTcpClient
 
 app = Flask(__name__)
+app.logger.disabled = True
 
 # ----------------------------
 # S7-300
