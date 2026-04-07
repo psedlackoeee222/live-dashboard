@@ -68,10 +68,16 @@ let chart = new Chart(document.getElementById("chart"), {
         ]
     },
     options: {
-        animation: false,
-        responsive: true,
-        maintainAspectRatio: true
+    animation: false,
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+        y: {
+            min: 0,
+            max: 500
+        }
     }
+}
 });
 
 async function update() {
@@ -105,7 +111,7 @@ async function update() {
     }
 }
 
-setInterval(update, 2000);
+setInterval(update, 5000);
 update();
 </script>
 

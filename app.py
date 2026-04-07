@@ -1,6 +1,7 @@
 # http://localhost:8080/
 # http://192.168.3.33:8080/
 # http://10.100.0.4:host:8080/
+# http://10.100.0.4:host:8080/
 
 
 from flask import Flask, jsonify, render_template
@@ -41,7 +42,7 @@ LOGO_VW200_ADDR = 100   # VW200 => adresa 100 (0-based)
 # ----------------------------
 # dashboard
 # ----------------------------
-POLL_SEC = 2
+POLL_SEC = 5
 HIST_LEN = 10
 
 hist_plc = deque(maxlen=HIST_LEN)
