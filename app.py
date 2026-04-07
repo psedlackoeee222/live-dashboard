@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, render_template
 from collections import deque
 import time
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 import snap7
 from snap7.util import get_int
@@ -78,7 +81,7 @@ def read_logo_vw200():
         raw_value = rr.registers[0]
         value = raw_value / 10.0
 
-        print(f"KAHL1 raw={raw_value} scaled={value}")
+        #  print(f"KAHL1 raw={raw_value} scaled={value}")
 
         return value, True, None
     except Exception as e:
@@ -94,7 +97,7 @@ def api_live():
     plc_value, plc_ok, plc_err = read_s7_qw288()
     logo_value, logo_ok, logo_err = read_logo_vw200()
 
-    print(f"S7={plc_value}  LOGO={logo_value}")
+    # print(f"S7={plc_value}  LOGO={logo_value}")
 
     if plc_value is None:
         plc_value = hist_plc[-1] if hist_plc else 0
@@ -120,4 +123,4 @@ def api_live():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=False)
