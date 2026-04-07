@@ -68,7 +68,7 @@ def read_s7_qw288():
     try:
         ensure_s7()
         data = s7_client.read_area(Areas.PA, 0, S7_QW288_BYTE, 2)
-        value = get_int(data, 0)
+        value = get_int(data, 0) / 100.0
         return value, True, None    #pokus
     except Exception as e:
         return None, False, str(e) #pokus
