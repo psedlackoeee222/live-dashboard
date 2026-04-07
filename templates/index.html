@@ -79,8 +79,8 @@ async function update() {
         const res = await fetch("/api/live");
         const data = await res.json();
 
-        document.getElementById("plc").innerText = data.plc;
-        document.getElementById("logo").innerText = data.logo;
+        document.getElementById("plc").innerText = Number(data.plc).toFixed(1);
+        document.getElementById("logo").innerText = Number(data.logo).toFixed(1);
         document.getElementById("time").innerText = data.time;
 
         const plcState = document.getElementById("plc_state");
