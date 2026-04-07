@@ -89,7 +89,6 @@ def read_logo_vw200():
 def index():
     return render_template("index.html")
 
-
 @app.route("/api/live")
 def api_live():
     plc_value, plc_ok, plc_err = read_s7_qw288()
