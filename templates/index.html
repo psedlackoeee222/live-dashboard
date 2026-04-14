@@ -111,7 +111,48 @@ async function update() {
     }
 }
 
-setInterval(update, 5000);
+let poll = 2000; // default 2s
+
+async function update() {
+    try {
+        const res = await fetch("/api/live");
+        const data = await res.json();
+
+        // nastav polling z Pythonu
+        poll = data.poll_sec * 1000;
+
+        document.getElementById("plc").innerText = Number(data.plc).toFixed(1);
+        document.getElementById("logo").innerText = Number(data.logo).toFixed(1);
+        document.getElementById("time").innerText = data.time;
+
+        const plcState = document.getElementById("plc_state");
+        const logoState = document.getElementById("logo_state");
+
+        plcState.innerText = data.plc_ok ? "ONLINE" : "ERROR - " + data.plc_err;
+        plcState.className = data.plc_ok ? "ok" : "err";
+
+        logoState.innerText = data.logo_ok ? "ONLINE" : "ERROR - " + data.logo_err;
+        logoState.className = data.logo_ok ? "ok" : "err";
+
+        chart.data.labels = data.hist_plc.map((_, i) => i + 1);
+        chart.data.datasets[0].data = data.hist_logo;
+        chart.data.datasets[1].data = data.hist_plc;
+
+        chart.update();
+    } catch (e) {
+        document.getElementById("plc_state").innerText = "Server unreachable";
+        document.getElementById("plc_state").className = "err";
+        document.getElementById("logo_state").innerText = "";
+        document.getElementById("logo_state").className = "";
+    }
+}
+
+function loop() {
+    update();
+    setTimeout(loop, poll);
+}
+
+loop();
 update();
 </script>
 
